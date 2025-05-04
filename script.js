@@ -1,3 +1,30 @@
+document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+      document.querySelector(".splash").style.display = "none";
+      document.querySelector(".content").style.display = "block";
+    }, 3000); // after animation ends
+  });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const messages = [
+        "Welcome to CodeStats!",
+        "Track. Improve. Succeed.",
+        "Your coding journey starts here.",
+        "Unlock your potential with every submission.",
+        "Coding Progress Dashboard",
+        "One step closer to your dream job"
+    ];
+
+    const splashText = document.querySelector(".splash h1");
+    splashText.textContent = messages[Math.floor(Math.random() * messages.length)];
+
+    setTimeout(() => {
+        document.querySelector(".splash").style.display = "none";
+        document.querySelector(".content").style.display = "block";
+    }, 3000);
+});
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const searchButton = document.querySelector(".search-btn");
     const usernameInput = document.getElementById("user-input");
@@ -91,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Display User Data
-    function displayUserData(parsedData) {
+    function displayUserData(parsedData, username) {
         const totalQues = parsedData.data.allQuestionsCount[0].count;
         const totalEasyQues = parsedData.data.allQuestionsCount[1].count;
         const totalMediumQues = parsedData.data.allQuestionsCount[2].count;
@@ -122,6 +149,49 @@ document.addEventListener("DOMContentLoaded", function () {
                     <p>${data.value}</p>
                 </div>`
         ).join("");
+
+                // Save Current Data to localStorage for Weekly/Monthly Tracking
+                const today = new Date().toISOString().split("T")[0];
+                const historyKey = `progress_${username}`;
+                const history = JSON.parse(localStorage.getItem(historyKey)) || {};
+                history[today] = {
+                    easy: solvedTotalEasyQues,
+                    medium: solvedTotalMediumQues,
+                    hard: solvedTotalHardQues,
+                    total: solvedTotalQues
+                };
+                localStorage.setItem(historyKey, JSON.stringify(history));
+        
+                // Strength & Weakness Detection
+                const totalSolved = solvedTotalEasyQues + solvedTotalMediumQues + solvedTotalHardQues;
+                const strengthMsg = () => {
+                    const easyPerc = (solvedTotalEasyQues / totalSolved) * 100;
+                    const medPerc = (solvedTotalMediumQues / totalSolved) * 100;
+                    const hardPerc = (solvedTotalHardQues / totalSolved) * 100;
+                    if (easyPerc > 50) return "You're strong in Easy problems!";
+                    if (medPerc > 50) return "Medium-level is your strength.";
+                    if (hardPerc > 30) return "Great! You're doing well in Hard problems.";
+                    return "Balanced problem-solving approach!";
+                };
+        
+                // Dynamic Recommendation based on Weak Area
+                const recommendMsg = () => {
+                    if (solvedTotalMediumQues < solvedTotalEasyQues * 0.6)
+                        return "Try solving more Medium questions for better prep.";
+                    if (solvedTotalHardQues < 5)
+                        return "Start attempting Hard problems once a week.";
+                    return "Keep up the consistent performance!";
+                };
+        
+                const analysisContainer = document.createElement("div");
+                analysisContainer.classList.add("analysis");
+                analysisContainer.innerHTML = `
+                    <h3>🧠 Insights & Recommendations</h3>
+                    <p><strong>Strength:</strong> ${strengthMsg()}</p>
+                    <p><strong>Tip:</strong> ${recommendMsg()}</p>
+                `;
+                statsContainer.appendChild(analysisContainer);
+        
     }
 
     // Event Listener for Search Button
