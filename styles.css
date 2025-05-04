@@ -25,7 +25,7 @@
   /* Big text in center with scale-up animation */
   .splash h1 {
     color: #eef5ed;
-    font-size: 4rem;
+    font-size: 2rem;
     animation: zoomText 2.5s ease-in-out forwards;
   }
   
@@ -235,4 +235,15 @@ h4 {
     border-radius: 10px;
     font-size: 1rem;
     min-height: 4rem;
+}
+
+.analysis {
+    margin-top: 20px;
+    background-color: #2a2727;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+.analysis h3 {
+    margin-bottom: 10px;
 }
